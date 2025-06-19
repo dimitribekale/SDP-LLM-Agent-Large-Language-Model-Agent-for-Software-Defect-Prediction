@@ -1,13 +1,13 @@
 import os
 import re
 import json
-import pydoc
 import tempfile
 import requests
 import subprocess
 import pandas as pd
 from tqdm import tqdm
 from duckduckgo_search import DDGS
+from tools.documentation_search_tool import DocumentationSearchTool
 from typing import List, Dict, Any, Optional, Tuple
 from sklearn.metrics import accuracy_score, precision_score, f1_score, classification_report, recall_score
 
@@ -280,41 +280,7 @@ class WebSearchTool:
             summary += f"{idx}. {r['title']}\n{r['snippet']}\nSource: {r['link']}\n\n"
         return summary, formatted
 
-class DocumentationSearchTool:
-    def __init__(self):
-        self.official_docs = {
-            "python": "https://docs.python.org/3/library/",
-            "java": "https://docs.oracle.com/javase/8/docs/api/",
-            "c++": "https://en.cppreference.com/w/",
-            "rust": "https://doc.rust-lang.org/std/",
-            "c": "https://en.cppreference.com/w/c"
-        }
 
-    def optimize_query(self, method, language):
-        return method.strip(), language.lower().strip()
-
-    def search_python(self, method):
-        try:
-            doc = pydoc.render_doc(method, "Help on %s")
-            return doc
-        except Exception as e:
-            return f"Could not find documentation for {method}: {e}"
-
-    def search_other(self, method, language):
-        doc_link = self.official_docs.get(language)
-        if doc_link:
-            return f"Refer to the official {language.capitalize()} documentation for `{method}`:\n{doc_link}"
-        else:
-            return f"No documentation source configured for language: {language}"
-
-    def __call__(self, method, language):
-        #print(f"[DocumentationSearchTool] Searching for: {method} in {language}")
-        method, language = self.optimize_query(method, language)
-        if language == "python":
-            doc = self.search_python(method)
-        else:
-            doc = self.search_other(method, language)
-        return doc
 
 class DefectPredictionAgent:
     def __init__(self, system_prompt: str, model_name: str = "codegemma:7b"):

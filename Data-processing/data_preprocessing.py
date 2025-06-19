@@ -47,8 +47,8 @@ def transform_dataset(input_path: str, output_path: str = "transformed_data.csv"
 
 if __name__ == "__main__":
 
-    final_df = pd.read_csv("transformed_data.csv")
+    final_df = pd.read_json(r"Datasets\faulty_vs_fixed_dataset.jsonl", lines=True)
+    final_df = pd.DataFrame(final_df)
 
-    for _, row in tqdm(final_df[:6].iterrows(), total=6, desc="Samples", leave=False):
-        code = row['code_samples']
-        print(f"Code Sample:\n{code}\n")
+    print("Transformed DataFrame:")
+    print(final_df.head())
